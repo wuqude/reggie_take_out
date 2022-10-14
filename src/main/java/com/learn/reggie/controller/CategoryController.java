@@ -1,5 +1,6 @@
 package com.learn.reggie.controller;
 
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.learn.reggie.common.R;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 /**
  * 分类管理
  */
+
 @RestController
 @RequestMapping("/category")
 @Slf4j
@@ -50,4 +52,20 @@ public class CategoryController {
         categoryService.page(pageInfo,queryWrapper);
         return R.success(pageInfo);
     }
+
+    /**
+     * 根据id删除分类
+     * @param id
+     * @return
+     */
+    @DeleteMapping
+    public R<String> delete(Long id){
+        log.info("删除分类，id为：{}",id);
+
+        //categoryService.removeById(id);
+        categoryService.remove(id);
+
+        return R.success("分类信息删除成功");
+    }
+
 }
