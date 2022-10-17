@@ -3,7 +3,7 @@ package com.learn.reggie.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.learn.reggie.entity.Dish;
-import com.learn.reggie.entity.DishDto;
+import com.learn.reggie.dto.DishDto;
 import com.learn.reggie.entity.DishFlavor;
 import com.learn.reggie.mapper.DishMapper;
 import com.learn.reggie.service.DishFlavorService;

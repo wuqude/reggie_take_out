@@ -3,13 +3,14 @@ package com.learn.reggie.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.learn.reggie.common.R;
-
+import com.learn.reggie.dto.DishDto;
+import com.learn.reggie.dto.SetmealDto;
 import com.learn.reggie.entity.Category;
 import com.learn.reggie.entity.Dish;
-import com.learn.reggie.entity.DishDto;
 import com.learn.reggie.service.CategoryService;
 import com.learn.reggie.service.DishFlavorService;
 import com.learn.reggie.service.DishService;
+import com.learn.reggie.service.SetmealService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,8 @@ public class DishController {
 
     @Autowired
     private CategoryService categoryService;
+
+    private SetmealService setmealService;
     /**
      * 新增菜品
      * @param dishDto
@@ -100,6 +103,29 @@ public class DishController {
     public R<DishDto> get(@PathVariable Long id){
         DishDto dishDto = dishService.getByIdWithFlavor(id);
         return R.success(dishDto);
+    }
+
+    @GetMapping("/list")
+    public R<List<Dish>> list(Dish dish){
+        LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(dish.getCategoryId() != null ,Dish::getCategoryId,dish.getCategoryId());
+        //添加条件，查询状态为1（起售状态）的菜品
+        queryWrapper.eq(Dish::getStatus,1);
+        //添加排序条件
+        queryWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
+
+        List<Dish> list = dishService.list(queryWrapper);
+        return R.success(list);
+
+    }
+
+    @PostMapping("/save")
+    public R<String> save(@RequestBody SetmealDto setmealDto){
+        log.info("套餐信息：{}",setmealDto);
+
+        setmealService.saveWithDish(setmealDto);
+
+        return R.success("新增套餐成功");
     }
 }
 

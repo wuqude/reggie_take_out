@@ -9,6 +9,7 @@ import com.learn.reggie.entity.Setmeal;
 import com.learn.reggie.mapper.CategoryMapper;
 import com.learn.reggie.service.CategoryService;
 import com.learn.reggie.service.DishService;
+import com.learn.reggie.service.SetmealService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
