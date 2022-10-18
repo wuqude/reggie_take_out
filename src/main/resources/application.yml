@@ -1,5 +1,9 @@
 server:
+<<<<<<< HEAD
   port: 8080
+=======
+  port: 8083
+>>>>>>> c9d003fccc5ac7d24d59ab954f5a7150510383a2
 spring:
   application:
     #应用名称 , 可选
@@ -18,4 +22,10 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
     db-config:
+<<<<<<< HEAD
       id-type: ASSIGN_ID
+=======
+      id-type: ASSIGN_ID
+reggie:
+  path: D:\img\
+>>>>>>> c9d003fccc5ac7d24d59ab954f5a7150510383a2
