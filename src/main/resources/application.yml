@@ -1,12 +1,8 @@
 server:
-<<<<<<< HEAD
   port: 8080
-=======
-  port: 8083
->>>>>>> c9d003fccc5ac7d24d59ab954f5a7150510383a2
 spring:
   application:
-    #应用名称 , 可选
+    #应用的名称，可选
     name: reggie_take_out
   datasource:
     druid:
@@ -16,16 +12,11 @@ spring:
       password: 123456
 mybatis-plus:
   configuration:
-    #在映射实体或者属性时，将数据库中表名和字段名中的下划线去掉，按照驼峰命名法映射 address_book ---> AddressBook
+    #在映射实体或者属性时，将数据库中表名和字段名中的下划线去掉，按照驼峰命名法映射
     map-underscore-to-camel-case: true
-    #日志输出
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
     db-config:
-<<<<<<< HEAD
-      id-type: ASSIGN_ID
-=======
       id-type: ASSIGN_ID
 reggie:
   path: D:\img\
->>>>>>> c9d003fccc5ac7d24d59ab954f5a7150510383a2
