@@ -32,12 +32,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    private DishFlavorService dishFlavorService;
-
-    private CategoryService categoryService;
-
-    private DishService dishService;
-
+   @Autowired
     private RedisTemplate redisTemplate;
 
     /**
@@ -80,8 +75,7 @@ public class UserController {
         //获取验证码
         String code = map.get("code").toString();
         //从Session中获取保存的验证码
-        Object codeInSession = session.getAttribute(phone);
-
+        Object codeInSession = redisTemplate.opsForValue().get(phone);
         //进行验证码的比对（页面提交的验证码和Session中保存的验证码比对）
         if(codeInSession != null && codeInSession.equals(code)){
             //如果能够比对成功，说明登录成功
@@ -98,8 +92,11 @@ public class UserController {
                 userService.save(user);
             }
             session.setAttribute("user",user.getId());
+
+            redisTemplate.delete(phone);
             return R.success(user);
         }
+
         return R.error("登录失败");
     }
 

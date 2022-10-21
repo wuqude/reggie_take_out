@@ -15,9 +15,12 @@ import com.learn.reggie.service.SetmealService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -36,6 +39,10 @@ public class DishController {
     @Autowired
     private CategoryService categoryService;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+    @Autowired
     private SetmealService setmealService;
     /**
      * 新增菜品
@@ -122,6 +129,17 @@ public class DishController {
 
     @GetMapping("/list")
     public R<List<DishDto>> list(Dish dish){
+        List<DishDto> dishDtoList=null;
+//动态构造key
+        String key = "dish_" + dish.getCategoryId() + "_" + dish.getStatus();//dish_1397844391040167938_1
+//先从redis中获取缓存数据
+        //先从redis中获取缓存数据
+        dishDtoList = (List<DishDto>) redisTemplate.opsForValue().get(key);
+        if(dishDtoList != null){
+            //如果存在，直接返回，无需查询数据库
+            return R.success(dishDtoList);
+        }
+
         //构造查询条件
         LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(dish.getCategoryId() != null ,Dish::getCategoryId,dish.getCategoryId());
@@ -132,7 +150,7 @@ public class DishController {
 
         List<Dish> list = dishService.list(queryWrapper);
 
-        List<DishDto> dishDtoList = list.stream().map((item) -> {
+      dishDtoList = list.stream().map((item) -> {
             DishDto dishDto = new DishDto();
             BeanUtils.copyProperties(item,dishDto);
 
@@ -155,6 +173,8 @@ public class DishController {
             return dishDto;
         }).collect(Collectors.toList());
 
+//      如果不存在,需要查寻数据,将查询到的数据缓存在数据库当中
+ redisTemplate.opsForValue().set(key,dishDtoList,60, TimeUnit.SECONDS);
         return R.success(dishDtoList);
     }
 
@@ -163,7 +183,14 @@ public class DishController {
         log.info("套餐信息：{}",setmealDto);
 
         setmealService.saveWithDish(setmealDto);
+//    A 清理所有分类下的菜品缓存
+        //清理所有菜品的缓存数据
+//        Set keys = redisTemplate.keys("dish_*"); //获取所有以dish_xxx开头的key
+//        redisTemplate.delete(keys); //删除这些key
 
+//     清理当前添加菜品分类下的缓存
+        //清理某个分类下面的菜品缓存数据
+       
         return R.success("新增套餐成功");
     }
 
