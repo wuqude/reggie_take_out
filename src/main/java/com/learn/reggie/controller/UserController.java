@@ -16,11 +16,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @RestController
@@ -35,6 +37,8 @@ public class UserController {
     private CategoryService categoryService;
 
     private DishService dishService;
+
+    private RedisTemplate redisTemplate;
 
     /**
      * 发送手机短信验证码
@@ -52,10 +56,12 @@ public class UserController {
 
             //调用阿里云提供的短信服务API完成发送短信
             //SMSUtils.sendMessage("瑞吉外卖","",phone,code);
-
             //需要将生成的验证码保存到Session
-            session.setAttribute(phone,code);
-            return R.success("手机验证码短信发送成功");
+//            session.setAttribute(phone,code);
+//            需要将生成的验证码保存到Redis,设置过期时间
+//            redisTemplate.opsForValue().set(phone,code,5);
+            redisTemplate.opsForValue().set(phone,code,5, TimeUnit.MINUTES);
+        return R.success("手机验证码短信发送成功");
         }
         return R.error("短信发送失败");
     }
